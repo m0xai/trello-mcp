@@ -279,3 +279,25 @@ async def delete_card(ctx: Context, card_id: str) -> dict:
         ctx.error(error_msg)
         raise
 
+
+# Add a prompt for common Trello operations
+@mcp.prompt()
+def trello_help() -> str:
+    """Provides help information about available Trello operations."""
+    return """
+    Available Trello Operations:
+    1. Board Operations:
+       - Get a specific board
+       - List all boards
+    2. List Operations:
+       - Get a specific list
+       - List all lists in a board
+       - Update a list's name
+       - Archive a list
+    3. Card Operations:
+       - Get a specific card
+       - List all cards in a list
+       - Create a new card
+       - Update a card's attributes
+       - Delete a card
+    """
