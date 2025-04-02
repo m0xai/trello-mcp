@@ -1,36 +1,8 @@
 # trello_api.py
 from trello_api import TrelloClient
-from typing import Dict, List, Optional, Any, TypedDict, Union
 
-
-# Type definitions for Trello API responses
-class TrelloBoard(TypedDict):
-    id: str
-    name: str
-    desc: Optional[str]
-    closed: bool
-    idOrganization: Optional[str]
-    url: str
-
-
-class TrelloList(TypedDict):
-    id: str
-    name: str
-    closed: bool
-    idBoard: str
-    pos: float
-
-
-class TrelloCard(TypedDict):
-    id: str
-    name: str
-    desc: Optional[str]
-    closed: bool
-    idList: str
-    idBoard: str
-    url: str
-    pos: float
-
+from typing import Dict, List, Any
+from models import TrelloBoard, TrelloList, TrelloCard
 
 TRELLO_API_BASE = "https://api.trello.com/1"
 
@@ -54,7 +26,8 @@ class TrelloService:
         Returns:
             TrelloBoard: The board object containing board details.
         """
-        return await self.client._get(f"/boards/{board_id}")
+        response = await self.client._get(f"/boards/{board_id}")
+        return TrelloBoard(**response)
 
     async def get_boards(self, member_id: str = "me") -> List[TrelloBoard]:
         """Retrieves all boards for a given member.
@@ -65,7 +38,8 @@ class TrelloService:
         Returns:
             List[TrelloBoard]: A list of board objects.
         """
-        return await self.client._get(f"/members/{member_id}/boards")
+        response = await self.client._get(f"/members/{member_id}/boards")
+        return [TrelloBoard(**board) for board in response]
 
     # Lists
     async def get_list(self, list_id: str) -> TrelloList:
@@ -77,7 +51,8 @@ class TrelloService:
         Returns:
             TrelloList: The list object containing list details.
         """
-        return await self.client._get(f"/lists/{list_id}")
+        response = await self.client._get(f"/lists/{list_id}")
+        return TrelloList(**response)
 
     async def get_lists(self, board_id: str) -> List[TrelloList]:
         """Retrieves all lists on a given board.
@@ -88,7 +63,8 @@ class TrelloService:
         Returns:
             List[TrelloList]: A list of list objects.
         """
-        return await self.client._get(f"/boards/{board_id}/lists")
+        response = await self.client._get(f"/boards/{board_id}/lists")
+        return [TrelloList(**list_data) for list_data in response]
 
     async def update_list(self, list_id: str, name: str) -> TrelloList:
         """Updates the name of a list.
@@ -100,7 +76,8 @@ class TrelloService:
         Returns:
             TrelloList: The updated list object.
         """
-        return await self.client._put(f"/lists/{list_id}", data={"name": name})
+        response = await self.client._put(f"/lists/{list_id}", data={"name": name})
+        return TrelloList(**response)
 
     async def delete_list(self, list_id: str) -> TrelloList:
         """Archives a list.
@@ -111,9 +88,10 @@ class TrelloService:
         Returns:
             TrelloList: The archived list object.
         """
-        return await self.client._put(
+        response = await self.client._put(
             f"/lists/{list_id}/closed", data={"value": "true"}
         )
+        return TrelloList(**response)
 
     # Cards
     async def get_card(self, card_id: str) -> TrelloCard:
@@ -125,7 +103,8 @@ class TrelloService:
         Returns:
             TrelloCard: The card object containing card details.
         """
-        return await self.client._get(f"/cards/{card_id}")
+        response = await self.client._get(f"/cards/{card_id}")
+        return TrelloCard(**response)
 
     async def get_cards(self, list_id: str) -> List[TrelloCard]:
         """Retrieves all cards in a given list.
@@ -136,7 +115,8 @@ class TrelloService:
         Returns:
             List[TrelloCard]: A list of card objects.
         """
-        return await self.client._get(f"/lists/{list_id}/cards")
+        response = await self.client._get(f"/lists/{list_id}/cards")
+        return [TrelloCard(**card) for card in response]
 
     async def create_card(
         self, list_id: str, name: str, desc: str = None
@@ -154,7 +134,8 @@ class TrelloService:
         data = {"name": name, "idList": list_id}
         if desc:
             data["desc"] = desc
-        return await self.client._post(f"/cards", data=data)
+        response = await self.client._post(f"/cards", data=data)
+        return TrelloCard(**response)
 
     async def update_card(self, card_id: str, **kwargs) -> TrelloCard:
         """Updates a card's attributes.
@@ -166,7 +147,8 @@ class TrelloService:
         Returns:
             TrelloCard: The updated card object.
         """
-        return await self.client._put(f"/cards/{card_id}", data=kwargs)
+        response = await self.client._put(f"/cards/{card_id}", data=kwargs)
+        return TrelloCard(**response)
 
     async def delete_card(self, card_id: str) -> Dict[str, Any]:
         """Deletes a card.
