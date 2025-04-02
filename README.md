@@ -3,20 +3,18 @@
 A powerful MCP server for interacting with Trello boards, lists, and cards via AI Hosts.
 
 ## Table of Contents
-
-- [Trello MCP Server](#trello-mcp-server)
-  - [Table of Contents](#table-of-contents)
-  - [Prerequisites](#prerequisites)
-  - [Pre-installation](#pre-installation)
-  - [Installation](#installation)
-  - [Capabilities](#capabilities)
-    - [Detailed Capabilities](#detailed-capabilities)
-      - [Board Operations](#board-operations)
-      - [List Operations](#list-operations)
-      - [Card Operations](#card-operations)
-  - [Usage](#usage)
-  - [Troubleshooting](#troubleshooting)
-  - [Contributing](#contributing)
+- [Table of Contents](#table-of-contents)
+- [Prerequisites](#prerequisites)
+- [Pre-installation](#pre-installation)
+- [Installation](#installation)
+- [Capabilities](#capabilities)
+- [Detailed Capabilities](#detailed-capabilities)
+    - [Board Operations](#board-operations)
+    - [List Operations](#list-operations)
+    - [Card Operations](#card-operations)
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 
 
 ## Prerequisites
