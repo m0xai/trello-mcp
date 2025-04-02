@@ -66,6 +66,23 @@ class TrelloService:
         response = await self.client._get(f"/boards/{board_id}/lists")
         return [TrelloList(**list_data) for list_data in response]
 
+    async def create_list(
+        self, board_id: str, name: str, pos: str = "bottom"
+    ) -> TrelloList:
+        """Creates a new list on a given board.
+
+        Args:
+            board_id (str): The ID of the board to create the list in.
+            name (str): The name of the new list.
+            pos (str, optional): The position of the new list. Can be "top" or "bottom". Defaults to "bottom".
+
+        Returns:
+            TrelloList: The newly created list object.
+        """
+        data = {"name": name, "idBoard": board_id, "pos": pos}
+        response = await self.client._post("/lists", data=data)
+        return TrelloList(**response)
+
     async def update_list(self, list_id: str, name: str) -> TrelloList:
         """Updates the name of a list.
 

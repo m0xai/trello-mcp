@@ -120,6 +120,32 @@ async def get_lists(ctx: Context, board_id: str) -> List[TrelloList]:
 
 
 @mcp.tool()
+async def create_list(
+    ctx: Context, board_id: str, name: str, pos: str = "bottom"
+) -> TrelloList:
+    """Creates a new list on a given board.
+
+    Args:
+        board_id (str): The ID of the board to create the list in.
+        name (str): The name of the new list.
+        pos (str, optional): The position of the new list. Can be "top" or "bottom". Defaults to "bottom".
+
+    Returns:
+        TrelloList: The newly created list object.
+    """
+    try:
+        logger.info(f"Creating list '{name}' in board: {board_id}")
+        result = await service.create_list(board_id, name, pos)
+        logger.info(f"Successfully created list '{name}' in board: {board_id}")
+        return result
+    except Exception as e:
+        error_msg = f"Failed to create list: {str(e)}"
+        logger.error(error_msg)
+        ctx.error(error_msg)
+        raise
+
+
+@mcp.tool()
 async def update_list(ctx: Context, list_id: str, name: str) -> TrelloList:
     """Updates the name of a list.
 
@@ -292,6 +318,7 @@ def trello_help() -> str:
     2. List Operations:
        - Get a specific list
        - List all lists in a board
+       - Create a new list
        - Update a list's name
        - Archive a list
     3. Card Operations:
