@@ -40,7 +40,7 @@ A powerful MCP server for interacting with Trello boards, lists, and cards via A
    - Click your app's icon and navigate to "API key" from left sidebar. 
    - Copy your "API key" and on the right side: "you can manually generate a Token." click the word token to get your Trello Token.
 
-2. Create a `.env.example` file in the project root with `.env` and set vairables you just got:
+2. Rename the `.env.example` file in the project root with `.env` and set vairables you just got:
 ```bash
 TRELLO_API_KEY=your_api_key_here
 TRELLO_TOKEN=your_token_here
