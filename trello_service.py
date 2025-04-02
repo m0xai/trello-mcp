@@ -48,6 +48,26 @@ class TrelloClient:
             board_id (str): The ID of the board whose lists to retrieve.
         """
         return await self._get(f"/boards/{board_id}/lists")
+    
+
+    async def update_list(self, list_id: str, name: str):
+        """Updates the name of a list.
+
+        Args:
+            list_id (str): The ID of the list to update.
+            name (str): The new name for the list.
+        """
+        return await self._put(f"/lists/{list_id}", data={"name": name})
+
+
+    async def delete_list(self, list_id: str):
+        """Archives a list.
+
+        Args:
+            list_id (str): The ID of the list to close.
+        """
+        return await self._put(f"/lists/{list_id}/closed", data={"value": "true"})
+
 
     # Cards
     async def get_card(self, card_id: str):
