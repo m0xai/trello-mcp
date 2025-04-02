@@ -31,18 +31,48 @@ except Exception as e:
     logger.error(f"Failed to initialize Trello client: {str(e)}")
     raise
 
+
+# Board Tools
 @mcp.tool()
-async def get_board(board_id: str) -> TrelloBoard:
+async def get_board(ctx: Context, board_id: str) -> TrelloBoard:
+    """Retrieves a specific board by its ID.
+
+    Args:
+        board_id (str): The ID of the board to retrieve.
+
+    Returns:
+        TrelloBoard: The board object containing board details.
+    """
     try:
-        board = await service.get_board(board_id)
-        return board
+        logger.info(f"Getting board with ID: {board_id}")
+        result = await service.get_board(board_id)
+        logger.info(f"Successfully retrieved board: {board_id}")
+        return result
     except Exception as e:
-        return str(e)
+        error_msg = f"Failed to get board: {str(e)}"
+        logger.error(error_msg)
+        ctx.error(error_msg)
+        raise
 
 
 @mcp.tool()
-async def get_boards() -> List[TrelloBoard]:
-    return await service.get_boards()
+async def get_boards(ctx: Context) -> List[TrelloBoard]:
+    """Retrieves all boards for the authenticated user.
+
+    Returns:
+        List[TrelloBoard]: A list of board objects.
+    """
+    try:
+        logger.info("Getting all boards")
+        result = await service.get_boards()
+        logger.info(f"Successfully retrieved {len(result)} boards")
+        return result
+    except Exception as e:
+        error_msg = f"Failed to get boards: {str(e)}"
+        logger.error(error_msg)
+        ctx.error(error_msg)
+        raise
+
 
 
 @mcp.tool()
