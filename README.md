@@ -4,12 +4,19 @@ A powerful MCP server for interacting with Trello boards, lists, and cards via A
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Pre-installation](#pre-installation)
-- [Installation](#installation)
-  - [Setting up Trello API credentials](#installation)
-  - [Installing dependencies](#installation)
-- [Capabilities](#capabilities)
+- [Trello MCP Server](#trello-mcp-server)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Pre-installation](#pre-installation)
+  - [Installation](#installation)
+  - [Capabilities](#capabilities)
+    - [Detailed Capabilities](#detailed-capabilities)
+      - [Board Operations](#board-operations)
+      - [List Operations](#list-operations)
+      - [Card Operations](#card-operations)
+  - [Usage](#usage)
+  - [Troubleshooting](#troubleshooting)
+  - [Contributing](#contributing)
 
 
 ## Prerequisites
@@ -111,7 +118,3 @@ If you encounter issues:
 ## Contributing
 
 Feel free to submit issues and enhancement requests!
-
-## License
-
-[Your chosen license]
