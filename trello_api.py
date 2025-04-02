@@ -1,5 +1,9 @@
 # trello_api.py
 import httpx
+import logging
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 TRELLO_API_BASE = "https://api.trello.com/1"
 
@@ -23,14 +27,14 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            print(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to get {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            print(f"Request error: {e}")
+            logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to get {endpoint}: {str(e)}")
 
     async def _post(self, endpoint: str, data: dict = None):
@@ -40,14 +44,14 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            print(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to post to {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            print(f"Request error: {e}")
+            logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to post to {endpoint}: {str(e)}")
 
     async def _put(self, endpoint: str, data: dict = None):
@@ -57,14 +61,14 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            print(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to put to {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            print(f"Request error: {e}")
+            logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to put to {endpoint}: {str(e)}")
 
     async def _delete(self, endpoint: str, params: dict = None):
@@ -76,12 +80,12 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            print(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to delete {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            print(f"Request error: {e}")
+            logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to delete {endpoint}: {str(e)}")
