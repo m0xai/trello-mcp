@@ -8,9 +8,9 @@ TRELLO_API_BASE = "https://api.trello.com/1"
 
 
 class TrelloService:
-    def __init__(self, api_key: str, token: str):
+    def __init__(self, client: TrelloClient):
         """Initializes the Trello client with API key and token."""
-        self.client = TrelloClient(api_key, token)
+        self.client = client
 
     async def close(self) -> None:
         """Closes the underlying HTTP client."""
