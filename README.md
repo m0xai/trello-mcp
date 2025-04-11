@@ -7,6 +7,9 @@ A powerful MCP server for interacting with Trello boards, lists, and cards via A
 - [Prerequisites](#prerequisites)
 - [Pre-installation](#pre-installation)
 - [Installation](#installation)
+- [Server Modes](#server-modes)
+- [Configuration](#configuration)
+- [Client Integration](#client-integration)
 - [Capabilities](#capabilities)
 - [Detailed Capabilities](#detailed-capabilities)
     - [Board Operations](#board-operations)
@@ -63,6 +66,117 @@ uv run mcp install main.py
 ```
 
 6. Restart Claude Desktop app
+
+## Server Modes
+
+This MCP server can run in two different modes:
+
+### Claude App Mode
+
+This mode integrates directly with the Claude Desktop application:
+
+1. Set `USE_CLAUDE_APP=true` in your `.env` file (this is the default)
+2. Run the server with:
+```bash
+uv run mcp install main.py
+```
+3. Restart the Claude Desktop application
+
+### SSE Server Mode
+
+This mode runs as a standalone SSE server that can be used with any MCP-compatible client, including Cursor:
+
+1. Set `USE_CLAUDE_APP=false` in your `.env` file
+2. Run the server with:
+```bash
+python main.py
+```
+3. The server will be available at `http://localhost:8000` by default (or your configured port)
+
+## Configuration
+
+The server can be configured using environment variables in the `.env` file:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| TRELLO_API_KEY | Your Trello API key | Required |
+| TRELLO_TOKEN | Your Trello API token | Required |
+| MCP_SERVER_NAME | The name of the MCP server | Trello MCP Server |
+| MCP_SERVER_HOST | Host address for SSE mode | 0.0.0.0 |
+| MCP_SERVER_PORT | Port for SSE mode | 8000 |
+| USE_CLAUDE_APP | Whether to use Claude app mode | true |
+
+You can customize the server by editing these values in your `.env` file.
+
+## Client Integration
+
+### Using with Claude Desktop
+
+1. Run the server in Claude app mode (`USE_CLAUDE_APP=true`)
+2. Start or restart Claude Desktop
+3. Claude will automatically detect and connect to your MCP server
+
+### Using with Cursor
+
+To connect your MCP server to Cursor:
+
+1. Run the server in SSE mode (`USE_CLAUDE_APP=false`)
+2. In Cursor, go to Settings (gear icon) > AI > Model Context Protocol
+3. Add a new server with URL `http://localhost:8000` (or your configured host/port)
+4. Select the server when using Cursor's AI features
+
+You can also add this configuration to your Cursor settings JSON file (typically at `~/.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "trello": {
+      "url": "http://localhost:8000/sse"
+    }
+  }
+}
+```
+
+### Using with Other MCP Clients
+
+For other MCP-compatible clients, point them to the SSE endpoint at `http://localhost:8000`.
+
+### Minimal Client Example
+
+Here's a minimal Python example to connect to the SSE endpoint:
+
+```python
+import asyncio
+import httpx
+
+async def connect_to_mcp_server():
+    url = "http://localhost:8000/sse"
+    headers = {"Accept": "text/event-stream"}
+    
+    async with httpx.AsyncClient() as client:
+        async with client.stream("GET", url, headers=headers) as response:
+            # Get the session ID from the first SSE message
+            session_id = None
+            async for line in response.aiter_lines():
+                if line.startswith("data:"):
+                    data = line[5:].strip()
+                    if "session_id=" in data and not session_id:
+                        session_id = data.split("session_id=")[1]
+                        
+                        # Send a message using the session ID
+                        message_url = f"http://localhost:8000/messages/?session_id={session_id}"
+                        message = {
+                            "role": "user",
+                            "content": {
+                                "type": "text",
+                                "text": "Show me my Trello boards"
+                            }
+                        }
+                        await client.post(message_url, json=message)
+
+if __name__ == "__main__":
+    asyncio.run(connect_to_mcp_server())
+```
 
 ## Capabilities
 
