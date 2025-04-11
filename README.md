@@ -103,6 +103,11 @@ Once installed, you can interact with your Trello boards through Claude. Here ar
 - "Update the description of card [card_name]"
 - "Archive the list [list_name]"
 
+Here are my example usages:
+<img width="1277" alt="Example Usage of Trello MCP server: Asking to list all my cards in Guitar Board" src="https://github.com/user-attachments/assets/fef29dfc-04b2-4af9-92a6-f8db2320c860" />
+<img width="1274" alt="Asking to add new song card into my project songs" src="https://github.com/user-attachments/assets/2d8406ca-1dde-41c0-a035-86d5271dd78f" />
+
+
 ## Troubleshooting
 
 If you encounter issues:
