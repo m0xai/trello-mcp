@@ -93,6 +93,26 @@ python main.py
 ```
 3. The server will be available at `http://localhost:8000` by default (or your configured port)
 
+### Docker Mode
+
+You can also run the server using Docker Compose:
+
+1. Make sure you have Docker and Docker Compose installed
+2. Create your `.env` file with your configuration
+3. Build and start the container:
+```bash
+docker-compose up -d
+```
+4. The server will run in SSE mode by default
+5. To view logs:
+```bash
+docker-compose logs -f
+```
+6. To stop the server:
+```bash
+docker-compose down
+```
+
 ## Configuration
 
 The server can be configured using environment variables in the `.env` file:
