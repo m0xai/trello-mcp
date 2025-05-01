@@ -200,12 +200,12 @@ if __name__ == "__main__":
 
 ## Capabilities
 
-| Operation | Board | List | Card |
-|-----------|-------|------|------|
-| Read      | ✅    | ✅    | ✅   |
-| Write     | ❌    | ✅    | ✅   |
-| Update    | ❌    | ✅    | ✅   |
-| Delete    | ❌    | ✅    | ✅   |
+| Operation | Board | List | Card | Checklist | Checklist Item |
+|-----------|-------|------|------|-----------|----------------|
+| Read      | ✅    | ✅    | ✅   | ✅        | ✅              |
+| Write     | ❌    | ✅    | ✅   | ✅        | ✅              |
+| Update    | ❌    | ✅    | ✅   | ✅        | ✅              |
+| Delete    | ❌    | ✅    | ✅   | ✅        | ✅              |
 
 ### Detailed Capabilities
 
@@ -227,6 +227,16 @@ if __name__ == "__main__":
 - ✅ Update card attributes
 - ✅ Delete cards
 
+#### Checklist Operations
+- ✅ Get a specific checklist
+- ✅ List all checklists in a card
+- ✅ Create a new checklist
+- ✅ Update a checklist
+- ✅ Delete a checklist
+- ✅ Add checkitem to checklist
+- ✅ Update checkitem
+- ✅ Delete checkitem
+
 ## Usage
 
 Once installed, you can interact with your Trello boards through Claude. Here are some example queries:
@@ -238,9 +248,12 @@ Once installed, you can interact with your Trello boards through Claude. Here ar
 - "Archive the list [list_name]"
 
 Here are my example usages:
+
 <img width="1277" alt="Example Usage of Trello MCP server: Asking to list all my cards in Guitar Board" src="https://github.com/user-attachments/assets/fef29dfc-04b2-4af9-92a6-f8db2320c860" />
+
 <img width="1274" alt="Asking to add new song card into my project songs" src="https://github.com/user-attachments/assets/2d8406ca-1dde-41c0-a035-86d5271dd78f" />
 
+<img width="1632" alt="Asking to add new card with checklist in it" src="https://github.com/user-attachments/assets/5a63f107-d135-402d-ab33-b9bf13eca751" />
 
 ## Troubleshooting
 
