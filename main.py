@@ -1,12 +1,13 @@
-import os
 import logging
-import asyncio
+import os
+
 import uvicorn
 from dotenv import load_dotenv
+from mcp.server.fastmcp import FastMCP
 from starlette.applications import Starlette
 from starlette.routing import Mount
-from mcp.server.fastmcp import FastMCP
-from trello_server import mcp
+
+from server.tools.tools import register_tools
 
 # Configure logging
 logging.basicConfig(
@@ -18,7 +19,14 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-async def start_claude_server():
+# Initialize MCP server
+mcp = FastMCP("Trello MCP Server")
+
+# Register tools
+register_tools(mcp)
+
+
+def start_claude_server():
     """Start the MCP server in Claude app mode"""
     try:
         # Verify environment variables
@@ -28,12 +36,8 @@ async def start_claude_server():
             )
 
         logger.info("Starting Trello MCP Server in Claude app mode...")
-        await mcp.start()
+        mcp.run()
         logger.info("Trello MCP Server started successfully")
-
-        # Keep the server running
-        while True:
-            await asyncio.sleep(1)
     except Exception as e:
         logger.error(f"Error starting Claude server: {str(e)}")
         raise
@@ -50,29 +54,31 @@ def start_sse_server():
 
         host = os.getenv("MCP_SERVER_HOST", "0.0.0.0")
         port = int(os.getenv("MCP_SERVER_PORT", "8000"))
-        
+
         # Create Starlette app with MCP server mounted
         app = Starlette(
             routes=[
                 Mount("/", app=mcp.sse_app()),
             ]
         )
-        
-        logger.info(f"Starting Trello MCP Server in SSE mode on http://{host}:{port}...")
+
+        logger.info(
+            f"Starting Trello MCP Server in SSE mode on http://{host}:{port}..."
+        )
         uvicorn.run(app, host=host, port=port)
     except Exception as e:
         logger.error(f"Error starting SSE server: {str(e)}")
         raise
 
 
-def main():
+if __name__ == "__main__":
     try:
         # Check which mode to run in (default to true for Claude app mode)
         use_claude = os.getenv("USE_CLAUDE_APP", "true").lower() == "true"
-        
+
         if use_claude:
             # Run in Claude app mode
-            asyncio.run(start_claude_server())
+            start_claude_server()
         else:
             # Run in SSE mode
             start_sse_server()
@@ -81,7 +87,3 @@ def main():
     except Exception as e:
         logger.error(f"Server error: {str(e)}")
         raise
-
-
-if __name__ == "__main__":
-    main()
