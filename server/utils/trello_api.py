@@ -1,6 +1,7 @@
 # trello_api.py
-import httpx
 import logging
+
+import httpx
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -9,6 +10,10 @@ TRELLO_API_BASE = "https://api.trello.com/1"
 
 
 class TrelloClient:
+    """
+    Client class for interacting with the Trello API over REST.
+    """
+
     def __init__(self, api_key: str, token: str):
         self.api_key = api_key
         self.token = token
@@ -18,7 +23,7 @@ class TrelloClient:
     async def close(self):
         await self.client.aclose()
 
-    async def _get(self, endpoint: str, params: dict = None):
+    async def GET(self, endpoint: str, params: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         if params:
             all_params.update(params)
@@ -37,7 +42,7 @@ class TrelloClient:
             logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to get {endpoint}: {str(e)}")
 
-    async def _post(self, endpoint: str, data: dict = None):
+    async def POST(self, endpoint: str, data: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         try:
             response = await self.client.post(endpoint, params=all_params, json=data)
@@ -54,7 +59,7 @@ class TrelloClient:
             logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to post to {endpoint}: {str(e)}")
 
-    async def _put(self, endpoint: str, data: dict = None):
+    async def PUT(self, endpoint: str, data: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         try:
             response = await self.client.put(endpoint, params=all_params, json=data)
@@ -71,7 +76,7 @@ class TrelloClient:
             logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to put to {endpoint}: {str(e)}")
 
-    async def _delete(self, endpoint: str, params: dict = None):
+    async def DELETE(self, endpoint: str, params: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         if params:
             all_params.update(params)
