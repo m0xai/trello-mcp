@@ -1,7 +1,11 @@
+"""
+Service for managing Trello cards in MCP server.
+"""
+
 from typing import Any, Dict, List
 
-from models import TrelloCard
-from trello_api import TrelloClient
+from server.models import TrelloCard
+from server.utils.trello_api import TrelloClient
 
 
 class CardService:
@@ -52,7 +56,7 @@ class CardService:
         data = {"name": name, "idList": list_id}
         if desc:
             data["desc"] = desc
-        response = await self.client.POST(f"/cards", data=data)
+        response = await self.client.POST("/cards", data=data)
         return TrelloCard(**response)
 
     async def update_card(self, card_id: str, **kwargs) -> TrelloCard:

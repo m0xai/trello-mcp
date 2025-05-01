@@ -1,10 +1,18 @@
+"""
+Service for managing Trello boards in MCP server.
+"""
+
 from typing import List
 
-from models import TrelloBoard
-from trello_api import TrelloClient
+from server.models import TrelloBoard
+from server.utils.trello_api import TrelloClient
 
 
 class BoardService:
+    """
+    Service class for managing Trello boards
+    """
+
     def __init__(self, client: TrelloClient):
         self.client = client
 

@@ -1,7 +1,7 @@
 from typing import List
 
-from models import TrelloList
-from trello_api import TrelloClient
+from server.models import TrelloList
+from server.utils.trello_api import TrelloClient
 
 
 class ListService:
