@@ -56,4 +56,7 @@ def trello_help() -> str:
        - Create a new checklist
        - Update a checklist
        - Delete a checklist
+       - Add checkitem to checklist
+       - Update checkitem
+       - Delete checkitem
     """
