@@ -10,6 +10,7 @@ from mcp.server.fastmcp import Context
 from server.models import TrelloCard
 from server.services.card import CardService
 from server.trello import client
+from server.dtos.update_card import UpdateCardPayload
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +84,9 @@ async def create_card(
         raise
 
 
-async def update_card(ctx: Context, card_id: str, **kwargs) -> TrelloCard:
+async def update_card(
+    ctx: Context, card_id: str, payload: UpdateCardPayload
+) -> TrelloCard:
     """Updates a card's attributes.
 
     Args:
@@ -94,8 +97,10 @@ async def update_card(ctx: Context, card_id: str, **kwargs) -> TrelloCard:
         TrelloCard: The updated card object.
     """
     try:
-        logger.info(f"Updating card {card_id} with attributes: {kwargs}")
-        result = await service.update_card(card_id, **kwargs)
+        logger.info(f"Updating card: {card_id} with payload: {payload}")
+        result = await service.update_card(
+            card_id, **payload.model_dump(exclude_unset=True)
+        )
         logger.info(f"Successfully updated card: {card_id}")
         return result
     except Exception as e:
