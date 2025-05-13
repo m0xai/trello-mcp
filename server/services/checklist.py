@@ -55,7 +55,7 @@ class ChecklistService:
         data = {"name": name}
         if pos:
             data["pos"] = pos
-        return await self.client.POST(f"/checklists", data={"idCard": card_id, **data})
+        return await self.client.POST("/checklists", data={"idCard": card_id, **data})
 
     async def update_checklist(
         self, checklist_id: str, name: Optional[str] = None, pos: Optional[str] = None
