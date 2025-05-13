@@ -4,7 +4,6 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
 
 jobs:
   build-and-check:
@@ -36,7 +35,7 @@ jobs:
         run: |
           pip install ruff flake8 || true
           if command -v ruff > /dev/null; then
-            ruff .
+            ruff check .
           else
             flake8 .
           fi
