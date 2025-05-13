@@ -9,7 +9,7 @@ jobs:
   build-and-check:
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: trello-mcp-server:ci
+      IMAGE_NAME: valerok86/trello-mcp-server:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -56,12 +56,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build Docker image with cache
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image with cache
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: false
-          load: true
+          push: true
           tags: ${{ env.IMAGE_NAME }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max

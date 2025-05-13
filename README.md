@@ -113,6 +113,68 @@ docker-compose logs -f
 docker-compose down
 ```
 
+#### Pulling the Docker Image (Alternative to Building)
+
+- A pre-built image is available at Docker Hub and is updated automatically by CI:
+
+```bash
+docker pull valerok86/trello-mcp-server:latest
+```
+
+Then run it with your `.env` file mounted:
+
+```bash
+docker run --env-file .env -p 8000:8000 valerok86/trello-mcp-server:latest
+```
+
+##### How to Prepare Your `.env` File
+
+1. **Get the Example File:**
+   - In the root of this repository, you will find a file named `.env.example`.
+   - Download or copy this file to your working directory and rename it to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+
+2. **Edit the `.env` File:**
+   - Open `.env` in your favorite text editor.
+   - Fill in the required values. At minimum, you need:
+     ```env
+     TRELLO_API_KEY=your_trello_api_key_here
+     TRELLO_TOKEN=your_trello_token_here
+     USE_CLAUDE_APP=false
+     MCP_SERVER_HOST=0.0.0.0
+     MCP_SERVER_PORT=8000
+     ```
+   - You can get your Trello API key and token by following the instructions in the "Installation" section above.
+   - **Tip:** Never commit your `.env` file to a public repository, as it contains sensitive credentials.
+
+3. **Where to Place the `.env` File:**
+   - Place the `.env` file in the same directory where you run your `docker run` command.
+   - Example directory structure:
+     ```
+     /your/project/
+       ├── .env
+       └── (other files)
+     ```
+
+4. **Full Example Workflow:**
+   ```bash
+   # Clone the repository (optional, for getting the .env.example file)
+   git clone https://github.com/m0xai/trello-mcp-server.git
+   cd trello-mcp-server
+
+   # Copy and edit the .env file
+   cp .env.example .env
+   # (edit .env with your credentials)
+
+   # Pull and run the Docker image
+   docker pull valerok86/trello-mcp-server:latest
+   docker run --env-file .env -p 8000:8000 valerok86/trello-mcp-server:latest
+   ```
+
+This allows you to get started quickly without building the image locally.
+
 ## Configuration
 
 The server can be configured using environment variables in the `.env` file:
