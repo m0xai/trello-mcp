@@ -68,6 +68,12 @@ jobs:
       - name: Install Trivy
         uses: aquasecurity/trivy-action@master
 
+      - name: Show IMAGE_NAME
+        run: echo $IMAGE_NAME
+
+      - name: List Docker images
+        run: docker images
+
       - name: Scan Docker image for vulnerabilities
         run: |
           trivy image --exit-code 1 --severity CRITICAL,HIGH $IMAGE_NAME
