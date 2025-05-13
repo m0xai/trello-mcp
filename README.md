@@ -248,10 +248,11 @@ if __name__ == "__main__":
 - ✅ Archive (delete) lists
 
 #### Card Operations
-- ✅ Read all cards in a list
+- ✅ Read all cards in a list (with optional filtering by creation or last activity date using the `from_date` parameter)
 - ✅ Read specific card details
 - ✅ Create new cards
 - ✅ Update card attributes
+- ✅ Move cards between lists (columns) using the new `move_card` endpoint/tool
 - ✅ Delete cards
 
 #### Checklist Operations
@@ -273,6 +274,8 @@ Once installed, you can interact with your Trello boards through Claude. Here ar
 - "Create a new card in list [list_name] with title [title]"
 - "Update the description of card [card_name]"
 - "Archive the list [list_name]"
+- "Show me all cards in list [list_name] created or updated since 2025-01-01"
+- "Move card [card_name] to the [target_list_name] column"
 
 Here are my example usages:
 
