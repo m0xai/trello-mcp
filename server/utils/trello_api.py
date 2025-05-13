@@ -1,5 +1,7 @@
 # trello_api.py
 import logging
+import asyncio
+import os
 
 import httpx
 
@@ -7,6 +9,31 @@ import httpx
 logger = logging.getLogger(__name__)
 
 TRELLO_API_BASE = "https://api.trello.com/1"
+
+
+def trello_rate_limit_handler(func):
+    async def wrapper(self, *args, **kwargs):
+        max_retries = 5
+        delay = 2  # seconds
+        for attempt in range(max_retries):
+            try:
+                response = await func(self, *args, **kwargs)
+                return response
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429:
+                    logger.warning(f"Trello rate limit hit. Attempt {attempt+1}/{max_retries}. Backing off...")
+                    # Try to get retry-after header, otherwise use delay
+                    retry_after = e.response.headers.get("Retry-After")
+                    if retry_after:
+                        wait_time = int(retry_after)
+                    else:
+                        wait_time = delay * (2 ** attempt)  # exponential backoff
+                    await asyncio.sleep(wait_time)
+                    continue
+                raise
+        logger.error("Exceeded maximum retries due to Trello rate limiting.")
+        raise Exception("Trello API rate limit exceeded. Please try again later.")
+    return wrapper
 
 
 class TrelloClient:
@@ -23,6 +50,7 @@ class TrelloClient:
     async def close(self):
         await self.client.aclose()
 
+    @trello_rate_limit_handler
     async def GET(self, endpoint: str, params: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         if params:
@@ -32,6 +60,12 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                headers = getattr(e.response, "headers", {})
+                print("WWW-Authenticate header:", headers.get("WWW-Authenticate"))
+                api_key = os.getenv("TRELLO_API_KEY", self.api_key)
+                auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
+                logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
             logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to get {endpoint}: {str(e)}",
@@ -42,6 +76,7 @@ class TrelloClient:
             logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to get {endpoint}: {str(e)}")
 
+    @trello_rate_limit_handler
     async def POST(self, endpoint: str, data: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         try:
@@ -49,6 +84,12 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                headers = getattr(e.response, "headers", {})
+                print("WWW-Authenticate header:", headers.get("WWW-Authenticate"))
+                api_key = os.getenv("TRELLO_API_KEY", self.api_key)
+                auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
+                logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
             logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to post to {endpoint}: {str(e)}",
@@ -59,6 +100,7 @@ class TrelloClient:
             logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to post to {endpoint}: {str(e)}")
 
+    @trello_rate_limit_handler
     async def PUT(self, endpoint: str, data: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         try:
@@ -66,6 +108,12 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                headers = getattr(e.response, "headers", {})
+                print("WWW-Authenticate header:", headers.get("WWW-Authenticate"))
+                api_key = os.getenv("TRELLO_API_KEY", self.api_key)
+                auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
+                logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
             logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to put to {endpoint}: {str(e)}",
@@ -76,6 +124,7 @@ class TrelloClient:
             logger.error(f"Request error: {e}")
             raise httpx.RequestError(f"Failed to put to {endpoint}: {str(e)}")
 
+    @trello_rate_limit_handler
     async def DELETE(self, endpoint: str, params: dict = None):
         all_params = {"key": self.api_key, "token": self.token}
         if params:
@@ -85,6 +134,12 @@ class TrelloClient:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                headers = getattr(e.response, "headers", {})
+                print("WWW-Authenticate header:", headers.get("WWW-Authenticate"))
+                api_key = os.getenv("TRELLO_API_KEY", self.api_key)
+                auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
+                logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
             logger.error(f"HTTP error: {e}")
             raise httpx.HTTPStatusError(
                 f"Failed to delete {endpoint}: {str(e)}",

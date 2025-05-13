@@ -128,6 +128,17 @@ The server can be configured using environment variables in the `.env` file:
 
 You can customize the server by editing these values in your `.env` file.
 
+## Trello API Rate Limiting
+
+This server automatically handles Trello API rate limits as described in the [official Trello documentation](https://developer.atlassian.com/cloud/trello/guides/rest-api/rate-limits/):
+
+- Trello enforces a limit of 300 requests per 10 seconds per API key, and 100 requests per 10 seconds per token.
+- If a rate limit is exceeded, Trello returns a 429 error and may include a `Retry-After` header.
+- The MCP server's Trello API client will automatically detect 429 errors, wait for the appropriate time (using the `Retry-After` header if present, otherwise using exponential backoff), and retry the request up to 5 times.
+- This ensures your requests are less likely to fail due to rate limiting, and you do not need to implement this logic yourself.
+
+**Reference:** [Trello API Rate Limits](https://developer.atlassian.com/cloud/trello/guides/rest-api/rate-limits/)
+
 ## Client Integration
 
 ### Using with Claude Desktop
@@ -142,7 +153,7 @@ To connect your MCP server to Cursor:
 
 1. Run the server in SSE mode (`USE_CLAUDE_APP=false`)
 2. In Cursor, go to Settings (gear icon) > AI > Model Context Protocol
-3. Add a new server with URL `http://localhost:8000` (or your configured host/port)
+3. Add a new server with URL `http://localhost:8000` (or your configured host/port), alternative to use dokcer 127.0.0.1 (not exposed to the outside work) and in the scp configuraiton use "url": `http://host.docker.internal:8952/sse`
 4. Select the server when using Cursor's AI features
 
 You can also add this configuration to your Cursor settings JSON file (typically at `~/.cursor/mcp.json`):
@@ -156,6 +167,22 @@ You can also add this configuration to your Cursor settings JSON file (typically
   }
 }
 ```
+
+### Automatic Trello Authorization URL
+
+If the server encounters a 401 Unauthorized error when communicating with the Trello API, it will automatically log a URL that you can visit to authorize the app for your Trello account. This URL is generated using your API key from the `.env` file and looks like this:
+
+```
+https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key=<YOUR_API_KEY>
+```
+
+**How to use:**
+1. Copy the URL from the server logs when prompted.
+2. Open it in your browser and approve the app.
+3. Copy the generated token and update your `.env` file as `TRELLO_TOKEN=your_new_token`.
+4. Restart the server to apply the new token.
+
+This makes it easy to authorize the app for any Trello user without manual URL construction.
 
 ### Using with Other MCP Clients
 
@@ -268,3 +295,19 @@ If you encounter issues:
 ## Contributing
 
 Feel free to submit issues and enhancement requests!
+
+## Automatic Trello Authorization URL
+
+If the server encounters a 401 Unauthorized error when communicating with the Trello API, it will automatically log a URL that you can visit to authorize the app for your Trello account. This URL is generated using your API key from the `.env` file and looks like this:
+
+```
+https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key=<YOUR_API_KEY>
+```
+
+**How to use:**
+1. Copy the URL from the server logs when prompted.
+2. Open it in your browser and approve the app.
+3. Copy the generated token and update your `.env` file as `TRELLO_TOKEN=your_new_token`.
+4. Restart the server to apply the new token.
+
+This makes it easy to authorize the app for any Trello user without manual URL construction.
