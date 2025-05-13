@@ -314,3 +314,8 @@ https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=
 4. Restart the server to apply the new token.
 
 This makes it easy to authorize the app for any Trello user without manual URL construction.
+
+## Trello Open API documnetation
+```
+https://developer.atlassian.com/cloud/trello/rest/api-group-cards/#api-cards-post 
+```
