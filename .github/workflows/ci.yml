@@ -65,22 +65,19 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
-      - name: Install Trivy
-        uses: aquasecurity/trivy-action@master
-
       - name: Show IMAGE_NAME
         run: echo $IMAGE_NAME
 
       - name: List Docker images
         run: docker images
 
-      - name: Scan Docker image for vulnerabilities
+      - name: Install Grype
         run: |
-          trivy image --exit-code 1 --severity CRITICAL,HIGH $IMAGE_NAME
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Scan dependencies for vulnerabilities (Trivy)
+      - name: Scan Docker image for vulnerabilities (Grype)
         run: |
-          trivy fs --exit-code 1 --severity CRITICAL,HIGH .
+          grype $IMAGE_NAME --fail-on high
 
       - name: Show success message
         if: success()
