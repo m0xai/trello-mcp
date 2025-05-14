@@ -26,10 +26,3 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    networks:
-      - trello-mcp-network
-
-networks:
-  trello-mcp-network:
-    name: trello-mcp-network
-    driver: bridge 
