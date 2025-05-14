@@ -91,7 +91,7 @@ This mode runs as a standalone SSE server that can be used with any MCP-compatib
 ```bash
 python main.py
 ```
-3. The server will be available at `http://localhost:8000` by default (or your configured port)
+3. The server will be available at `http://localhost:8952` by default (or your configured port)
 
 ### Docker Mode
 
@@ -124,7 +124,7 @@ docker pull valerok86/trello-mcp-server:latest
 Then run it with your `.env` file mounted:
 
 ```bash
-docker run --env-file .env -p 8000:8000 valerok86/trello-mcp-server:latest
+docker run --env-file .env -p 8952:8952 valerok86/trello-mcp-server:latest
 ```
 
 ##### How to Prepare Your `.env` File
@@ -144,7 +144,7 @@ docker run --env-file .env -p 8000:8000 valerok86/trello-mcp-server:latest
      TRELLO_TOKEN=your_trello_token_here
      USE_CLAUDE_APP=false
      MCP_SERVER_HOST=0.0.0.0
-     MCP_SERVER_PORT=8000
+     MCP_SERVER_PORT=8952
      ```
    - You can get your Trello API key and token by following the instructions in the "Installation" section above.
    - **Tip:** Never commit your `.env` file to a public repository, as it contains sensitive credentials.
@@ -170,7 +170,7 @@ docker run --env-file .env -p 8000:8000 valerok86/trello-mcp-server:latest
 
    # Pull and run the Docker image
    docker pull valerok86/trello-mcp-server:latest
-   docker run --env-file .env -p 8000:8000 valerok86/trello-mcp-server:latest
+   docker run --env-file .env -p 8952:8952 valerok86/trello-mcp-server:latest
    ```
 
 This allows you to get started quickly without building the image locally.
@@ -185,7 +185,7 @@ The server can be configured using environment variables in the `.env` file:
 | TRELLO_TOKEN | Your Trello API token | Required |
 | MCP_SERVER_NAME | The name of the MCP server | Trello MCP Server |
 | MCP_SERVER_HOST | Host address for SSE mode | 0.0.0.0 |
-| MCP_SERVER_PORT | Port for SSE mode | 8000 |
+| MCP_SERVER_PORT | Port for SSE mode | 8952 |
 | USE_CLAUDE_APP | Whether to use Claude app mode | true |
 
 You can customize the server by editing these values in your `.env` file.
@@ -215,7 +215,7 @@ To connect your MCP server to Cursor:
 
 1. Run the server in SSE mode (`USE_CLAUDE_APP=false`)
 2. In Cursor, go to Settings (gear icon) > AI > Model Context Protocol
-3. Add a new server with URL `http://localhost:8000` (or your configured host/port), alternative to use dokcer 127.0.0.1 (not exposed to the outside work) and in the scp configuraiton use "url": `http://host.docker.internal:8952/sse`
+3. Add a new server with URL `http://localhost:8952` (or your configured host/port), alternative to use dokcer 127.0.0.1 (not exposed to the outside work) and in the scp configuraiton use "url": `http://host.docker.internal:8952/sse`
 4. Select the server when using Cursor's AI features
 
 You can also add this configuration to your Cursor settings JSON file (typically at `~/.cursor/mcp.json`):
@@ -223,9 +223,37 @@ You can also add this configuration to your Cursor settings JSON file (typically
 ```json
 {
   "mcpServers": {
-    "trello": {
-      "url": "http://localhost:8000/sse"
-    }
+    "trello-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "TRELLO_API_KEY",
+        "-e",
+        "TRELLO_TOKEN",
+        "-e",
+        "USE_CLAUDE_APP",
+        "-e",
+        "MCP_SERVER_HOST",
+        "-e",
+        "MCP_SERVER_PORT",
+        "-e",
+        "MCP_SERVER_NAME",
+        "-p",
+        "8952:8952",
+        "valerok86/trello-mcp-server:latest"
+      ],
+      "env": {
+        "TRELLO_API_KEY": "your_api_key",
+        "TRELLO_TOKEN": "your_token",
+        "USE_CLAUDE_APP": "false",
+        "MCP_SERVER_HOST": "0.0.0.0",
+        "MCP_SERVER_PORT": "8952",
+        "MCP_SERVER_NAME": "Trello MCP Server"
+      },
+      "url": "http://localhost:8952/sse"
   }
 }
 ```
@@ -248,7 +276,7 @@ This makes it easy to authorize the app for any Trello user without manual URL c
 
 ### Using with Other MCP Clients
 
-For other MCP-compatible clients, point them to the SSE endpoint at `http://localhost:8000`.
+For other MCP-compatible clients, point them to the SSE endpoint at `http://localhost:8952`.
 
 ### Minimal Client Example
 
@@ -259,7 +287,7 @@ import asyncio
 import httpx
 
 async def connect_to_mcp_server():
-    url = "http://localhost:8000/sse"
+    url = "http://localhost:8952/sse"
     headers = {"Accept": "text/event-stream"}
     
     async with httpx.AsyncClient() as client:
@@ -273,7 +301,7 @@ async def connect_to_mcp_server():
                         session_id = data.split("session_id=")[1]
                         
                         # Send a message using the session ID
-                        message_url = f"http://localhost:8000/messages/?session_id={session_id}"
+                        message_url = f"http://localhost:8952/messages/?session_id={session_id}"
                         message = {
                             "role": "user",
                             "content": {
@@ -381,3 +409,49 @@ This makes it easy to authorize the app for any Trello user without manual URL c
 ```
 https://developer.atlassian.com/cloud/trello/rest/api-group-cards/#api-cards-post 
 ```
+
+### Overriding .env Configurations with Docker
+
+You can override any configuration from your `.env` file by passing environment variables directly to the container using the `-e` flag with `docker run`. In fact, you can provide all configuration parameters this way, making the `.env` file optional. For example:
+
+```sh
+docker run \
+  -e TRELLO_API_KEY=your_api_key \
+  -e TRELLO_TOKEN=your_token \
+  -e USE_CLAUDE_APP=false \
+  -e MCP_SERVER_HOST=0.0.0.0 \
+  -e MCP_SERVER_PORT=8952 \
+  -e MCP_SERVER_NAME="Trello MCP Server" \
+  -p 8952:8952 \
+  valerok86/trello-mcp-server:latest
+```
+
+Environment variables passed with `-e` will take precedence over those defined in your `.env` file. This allows you to easily change configuration at runtime without modifying your `.env` file, or to run the container without a `.env` file at all.
+
+### Running with Docker Run (Alternative to Docker Compose)
+
+You can run the container directly using `docker run` instead of Docker Compose. Here's the simplified command that relies on defaults from the Dockerfile:
+
+```sh
+docker run \
+  --restart unless-stopped \
+  -p "${MCP_SERVER_PORT:-8952}:${MCP_SERVER_PORT:-8952}" \
+  -v "$(pwd):/app" \
+  --env-file .env \
+  valerok86/trello-mcp-server:latest
+```
+
+This command:
+- Uses the same restart policy as Docker Compose
+- Maps the same port (defaulting to 8952 if not specified)
+- Mounts the current directory to `/app` in the container
+- Loads environment variables from `.env`
+
+The following settings are now handled by the Dockerfile:
+- Python unbuffered output (PYTHONUNBUFFERED=1)
+- SSE mode (USE_CLAUDE_APP=false)
+- Server name (MCP_SERVER_NAME)
+- Server host (MCP_SERVER_HOST)
+- Default port (MCP_SERVER_PORT)
+
+You can still override any of these settings using the `-e` flag if needed.
