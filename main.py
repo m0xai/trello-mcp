@@ -11,7 +11,7 @@ from server.tools.tools import register_tools
 
 # Configure logging
 logging.basicConfig(
-    level=logging.ERROR, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -61,9 +61,6 @@ def start_sse_server():
             ]
         )
 
-        logger.info(
-            f"Starting Trello MCP Server in SSE mode on http://{host}:{port}..."
-        )
         uvicorn.run(app, host=host, port=port)
     except Exception as e:
         logger.error(f"Error starting SSE server: {str(e)}")

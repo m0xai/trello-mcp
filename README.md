@@ -229,6 +229,8 @@ You can also add this configuration to your Cursor settings JSON file (typically
         "run",
         "-i",
         "--rm",
+        "--name",
+        "trello-mcp",
         "-e",
         "TRELLO_API_KEY",
         "-e",
