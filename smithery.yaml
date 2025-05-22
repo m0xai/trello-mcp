@@ -1,0 +1,24 @@
+# Smithery configuration file: https://smithery.ai/docs/build/project-config
+
+startCommand:
+  type: stdio
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({ command: 'python', args: ['main.py'], env: { TRELLO_API_KEY: config.trelloApiKey, TRELLO_TOKEN: config.trelloToken } })
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - trelloApiKey
+      - trelloToken
+    properties:
+      trelloApiKey:
+        type: string
+        description: Your Trello API Key
+      trelloToken:
+        type: string
+        description: Your Trello Token
+  exampleConfig:
+    trelloApiKey: your_api_key_here
+    trelloToken: your_token_here
