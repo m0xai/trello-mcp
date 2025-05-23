@@ -10,6 +10,7 @@ def register_tools(mcp):
     # Board Tools
     mcp.add_tool(board.get_board)
     mcp.add_tool(board.get_boards)
+    mcp.add_tool(board.get_board_labels)
 
     # List Tools
     mcp.add_tool(list.get_list)
