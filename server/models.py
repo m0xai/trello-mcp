@@ -44,3 +44,4 @@ class TrelloCard(BaseModel):
     url: str
     pos: float
     labels: List[TrelloLabel] = []
+    due: Optional[str] = None
