@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${MCP_SERVER_PORT:-8952}:${MCP_SERVER_PORT:-8952}"
+    network_mode: host
     volumes:
       - .:/app
     env_file:
