@@ -129,3 +129,28 @@ async def delete_card(ctx: Context, card_id: str) -> dict:
         logger.error(error_msg)
         await ctx.error(error_msg)
         raise
+
+
+async def move_card(
+    ctx: Context, card_id: str, list_id: str, pos: str | None = None
+) -> TrelloCard:
+    """Moves a card to a different list.
+
+    Args:
+        card_id (str): The ID of the card to move.
+        list_id (str): The ID of the list to move the card to.
+        pos (str, optional): The position of the card in the new list (top, bottom, or a positive number). Defaults to None.
+
+    Returns:
+        TrelloCard: The moved card object.
+    """
+    try:
+        logger.info(f"Moving card {card_id} to list {list_id} at position: {pos}")
+        result = await service.move_card(card_id, list_id, pos)
+        logger.info(f"Successfully moved card {card_id} to list {list_id}")
+        return result
+    except Exception as e:
+        error_msg = f"Failed to move card: {str(e)}"
+        logger.error(error_msg)
+        await ctx.error(error_msg)
+        raise

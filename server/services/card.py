@@ -82,3 +82,20 @@ class CardService:
             Dict[str, Any]: The response from the delete operation.
         """
         return await self.client.DELETE(f"/cards/{card_id}")
+
+    async def move_card(self, card_id: str, list_id: str, pos: str | None = None) -> TrelloCard:
+        """Moves a card to a different list.
+
+        Args:
+            card_id (str): The ID of the card to move.
+            list_id (str): The ID of the list to move the card to.
+            pos (str, optional): The position of the card in the new list (top, bottom, or a positive number). Defaults to None.
+
+        Returns:
+            TrelloCard: The updated card object.
+        """
+        data = {"idList": list_id}
+        if pos:
+            data["pos"] = pos
+        response = await self.client.PUT(f"/cards/{card_id}", data=data)
+        return TrelloCard(**response)
