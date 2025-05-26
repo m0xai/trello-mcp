@@ -32,6 +32,15 @@ class TrelloLabel(BaseModel):
     color: Optional[str] = None
 
 
+class TrelloComment(BaseModel):
+    """Model representing a Trello comment."""
+
+    id: str
+    author_id: str
+    date: str
+    text: str
+
+
 class TrelloCard(BaseModel):
     """Model representing a Trello card."""
 
@@ -45,3 +54,4 @@ class TrelloCard(BaseModel):
     pos: float
     labels: List[TrelloLabel] = []
     due: Optional[str] = None
+    comments: List[TrelloComment] = []
