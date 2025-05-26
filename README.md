@@ -1,5 +1,7 @@
 # Trello MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@m0xai/trello-mcp-server)](https://smithery.ai/server/@m0xai/trello-mcp-server)
+
 A powerful MCP server for interacting with Trello boards, lists, and cards via AI Hosts.
 
 ## Table of Contents
@@ -34,7 +36,15 @@ A powerful MCP server for interacting with Trello boards, lists, and cards via A
 
 ## Installation
 
+### Installing via Smithery
 
+To install Trello MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@m0xai/trello-mcp-server):
+
+```bash
+npx -y @smithery/cli install @m0xai/trello-mcp-server --client claude
+```
+
+### Installing Manually
 
 1. Set up Trello API credentials:
    - Go to [Trello Apps Administration](https://trello.com/power-ups/admin)
