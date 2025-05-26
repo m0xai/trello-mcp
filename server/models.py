@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel
 
@@ -8,9 +8,9 @@ class TrelloBoard(BaseModel):
 
     id: str
     name: str
-    desc: Optional[str] = None
+    desc: str | None = None
     closed: bool = False
-    idOrganization: Optional[str] = None
+    idOrganization: str | None = None
     url: str
 
 
@@ -29,7 +29,7 @@ class TrelloLabel(BaseModel):
     
     id: str
     name: str
-    color: Optional[str] = None
+    color: str | None = None
 
 
 class TrelloCard(BaseModel):
@@ -37,11 +37,11 @@ class TrelloCard(BaseModel):
 
     id: str
     name: str
-    desc: Optional[str] = None
+    desc: str | None = None
     closed: bool = False
     idList: str
     idBoard: str
     url: str
     pos: float
     labels: List[TrelloLabel] = []
-    due: Optional[str] = None
+    due: str | None = None
