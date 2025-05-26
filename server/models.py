@@ -45,3 +45,4 @@ class TrelloCard(BaseModel):
     pos: float
     labels: List[TrelloLabel] = []
     due: Optional[str] = None
+    dueComplete: bool = False
