@@ -4,7 +4,7 @@ Service for managing Trello cards in MCP server.
 
 from typing import Any, Dict, List
 
-from server.models import TrelloCard
+from server.models import TrelloCard, TrelloComment
 from server.utils.trello_api import TrelloClient
 
 
@@ -25,8 +25,15 @@ class CardService:
         Returns:
             TrelloCard: The card object containing card details.
         """
-        response = await self.client.GET(f"/cards/{card_id}")
-        return TrelloCard(**response)
+        params = {"actions": "commentCard"}
+        response = await self.client.GET(f"/cards/{card_id}", params=params)
+        
+        # Parse comments from actions
+        comments = self._parse_comments(response.get("actions", []))
+        
+        card_data = response
+        card_data["comments"] = comments
+        return TrelloCard(**card_data)
 
     async def get_cards(self, list_id: str) -> List[TrelloCard]:
         """Retrieves all cards in a given list.
@@ -82,3 +89,24 @@ class CardService:
             Dict[str, Any]: The response from the delete operation.
         """
         return await self.client.DELETE(f"/cards/{card_id}")
+
+    def _parse_comments(self, actions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Parse comments from Trello actions.
+
+        Args:
+            actions (List[Dict[str, Any]]): List of Trello actions.
+
+        Returns:
+            List[Dict[str, Any]]: List of parsed comments.
+        """
+        comments = []
+        for action in actions:
+            if action.get("type") == "commentCard":
+                comment_data = action.get("data", {}).get("text", "")
+                comments.append({
+                    "id": action.get("id"),
+                    "author_id": action.get("idMemberCreator"),
+                    "date": action.get("date"),
+                    "text": comment_data
+                })
+        return comments
