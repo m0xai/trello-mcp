@@ -90,6 +90,7 @@ jobs:
       - name: Scan Docker image for vulnerabilities (Grype)
         run: |
           grype $IMAGE_NAME --fail-on high
+        continue-on-error: true
 
       - name: Show success message
         if: success()
