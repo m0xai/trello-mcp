@@ -7,6 +7,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from mcp.server.fastmcp import Context
+from fastmcp import FastMCP
 
 from server.models import TrelloCard
 from server.services.card import CardService
@@ -17,8 +18,11 @@ logger = logging.getLogger(__name__)
 
 service = CardService(client)
 
+mcp = FastMCP("Trello MCP")
 
-async def get_card(ctx: Context, card_id: str) -> TrelloCard:
+
+@mcp.tool()
+async def get_card(context: Context, card_id: str) -> TrelloCard:
     """Retrieves a specific card by its ID.
 
     Args:
@@ -35,11 +39,12 @@ async def get_card(ctx: Context, card_id: str) -> TrelloCard:
     except Exception as e:
         error_msg = f"Failed to get card: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
 
 
-async def get_cards(ctx: Context, list_id: str, from_date: Optional[str] = None) -> List[TrelloCard]:
+@mcp.tool()
+async def get_cards(context: Context, list_id: str, from_date: Optional[str] = None) -> List[TrelloCard]:
     """Retrieves all cards in a given list, optionally filtered by creation or last activity date.
 
     Args:
@@ -57,7 +62,7 @@ async def get_cards(ctx: Context, list_id: str, from_date: Optional[str] = None)
             try:
                 cutoff = datetime.fromisoformat(from_date)
             except Exception:
-                await ctx.error(f"Invalid from_date format: {from_date}. Use ISO 8601 format.")
+                await context.error(f"Invalid from_date format: {from_date}. Use ISO 8601 format.")
                 return []
             filtered = []
             for card in result:
@@ -70,12 +75,13 @@ async def get_cards(ctx: Context, list_id: str, from_date: Optional[str] = None)
     except Exception as e:
         error_msg = f"Failed to get cards: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
 
 
+@mcp.tool()
 async def create_card(
-    ctx: Context, list_id: str, name: str, desc: str | None = None
+    context: Context, list_id: str, name: str, desc: str | None = None
 ) -> TrelloCard:
     """Creates a new card in a given list.
 
@@ -95,12 +101,13 @@ async def create_card(
     except Exception as e:
         error_msg = f"Failed to create card: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
 
 
+@mcp.tool()
 async def update_card(
-    ctx: Context, card_id: str, payload: UpdateCardPayload
+    context: Context, card_id: str, payload: UpdateCardPayload
 ) -> TrelloCard:
     """Updates a card's attributes.
 
@@ -121,11 +128,12 @@ async def update_card(
     except Exception as e:
         error_msg = f"Failed to update card: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
 
 
-async def delete_card(ctx: Context, card_id: str) -> dict:
+@mcp.tool()
+async def delete_card(context: Context, card_id: str) -> dict:
     """Deletes a card.
 
     Args:
@@ -142,11 +150,12 @@ async def delete_card(ctx: Context, card_id: str) -> dict:
     except Exception as e:
         error_msg = f"Failed to delete card: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
 
 
-async def move_card(ctx: Context, card_id: str, target_list_id: str) -> TrelloCard:
+@mcp.tool()
+async def move_card(context: Context, card_id: str, target_list_id: str) -> TrelloCard:
     """
     Moves a card to a different list (column) by updating its idList.
 
@@ -165,5 +174,5 @@ async def move_card(ctx: Context, card_id: str, target_list_id: str) -> TrelloCa
     except Exception as e:
         error_msg = f"Failed to move card: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise

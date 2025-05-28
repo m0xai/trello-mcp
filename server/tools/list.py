@@ -6,6 +6,7 @@ import logging
 from typing import List
 
 from mcp.server.fastmcp import Context
+from fastmcp import FastMCP
 
 from server.models import TrelloList
 from server.services.list import ListService
@@ -15,8 +16,11 @@ logger = logging.getLogger(__name__)
 
 service = ListService(client)
 
+mcp = FastMCP("Trello MCP")
+
 
 # List Tools
+@mcp.tool()
 async def get_list(ctx: Context, list_id: str) -> TrelloList:
     """Retrieves a specific list by its ID.
 
@@ -38,6 +42,7 @@ async def get_list(ctx: Context, list_id: str) -> TrelloList:
         raise
 
 
+@mcp.tool()
 async def get_lists(ctx: Context, board_id: str) -> List[TrelloList]:
     """Retrieves all lists on a given board.
 
@@ -59,6 +64,7 @@ async def get_lists(ctx: Context, board_id: str) -> List[TrelloList]:
         raise
 
 
+@mcp.tool()
 async def create_list(
     ctx: Context, board_id: str, name: str, pos: str = "bottom"
 ) -> TrelloList:
@@ -84,6 +90,7 @@ async def create_list(
         raise
 
 
+@mcp.tool()
 async def update_list(ctx: Context, list_id: str, name: str) -> TrelloList:
     """Updates the name of a list.
 
@@ -106,6 +113,7 @@ async def update_list(ctx: Context, list_id: str, name: str) -> TrelloList:
         raise
 
 
+@mcp.tool()
 async def delete_list(ctx: Context, list_id: str) -> TrelloList:
     """Archives a list.
 

@@ -5,14 +5,20 @@ This module contains tools for managing Trello checklists.
 import logging
 from typing import Dict, List, Optional
 
+from mcp.server.fastmcp import Context
+from fastmcp import FastMCP
+
 from server.services.checklist import ChecklistService
 from server.trello import client
 
 logger = logging.getLogger(__name__)
 service = ChecklistService(client)
 
+mcp = FastMCP("Trello MCP")
 
-async def get_checklist(checklist_id: str) -> Dict:
+
+@mcp.tool()
+async def get_checklist(context: Context, checklist_id: str) -> Dict:
     """
     Get a specific checklist by ID.
 
@@ -25,7 +31,8 @@ async def get_checklist(checklist_id: str) -> Dict:
     return await service.get_checklist(checklist_id)
 
 
-async def get_card_checklists(card_id: str) -> List[Dict]:
+@mcp.tool()
+async def get_card_checklists(context: Context, card_id: str) -> List[Dict]:
     """
     Get all checklists for a specific card.
 
@@ -38,7 +45,8 @@ async def get_card_checklists(card_id: str) -> List[Dict]:
     return await service.get_card_checklists(card_id)
 
 
-async def create_checklist(card_id: str, name: str, pos: Optional[str] = None) -> Dict:
+@mcp.tool()
+async def create_checklist(context: Context, card_id: str, name: str, pos: Optional[str] = None) -> Dict:
     """
     Create a new checklist on a card.
 
@@ -53,9 +61,8 @@ async def create_checklist(card_id: str, name: str, pos: Optional[str] = None) -
     return await service.create_checklist(card_id, name, pos)
 
 
-async def update_checklist(
-    checklist_id: str, name: Optional[str] = None, pos: Optional[str] = None
-) -> Dict:
+@mcp.tool()
+async def update_checklist(context: Context, checklist_id: str, name: Optional[str] = None, pos: Optional[str] = None) -> Dict:
     """
     Update an existing checklist.
 
@@ -70,7 +77,8 @@ async def update_checklist(
     return await service.update_checklist(checklist_id, name, pos)
 
 
-async def delete_checklist(checklist_id: str) -> Dict:
+@mcp.tool()
+async def delete_checklist(context: Context, checklist_id: str) -> Dict:
     """
     Delete a checklist.
 
@@ -83,9 +91,8 @@ async def delete_checklist(checklist_id: str) -> Dict:
     return await service.delete_checklist(checklist_id)
 
 
-async def add_checkitem(
-    checklist_id: str, name: str, checked: bool = False, pos: Optional[str] = None
-) -> Dict:
+@mcp.tool()
+async def add_checkitem(context: Context, checklist_id: str, name: str, checked: bool = False, pos: Optional[str] = None) -> Dict:
     """
     Add a new item to a checklist.
 
@@ -101,13 +108,8 @@ async def add_checkitem(
     return await service.add_checkitem(checklist_id, name, checked, pos)
 
 
-async def update_checkitem(
-    checklist_id: str,
-    checkitem_id: str,
-    name: Optional[str] = None,
-    checked: Optional[bool] = None,
-    pos: Optional[str] = None,
-) -> Dict:
+@mcp.tool()
+async def update_checkitem(context: Context, checklist_id: str, checkitem_id: str, name: Optional[str] = None, checked: Optional[bool] = None, pos: Optional[str] = None) -> Dict:
     """
     Update a checkitem in a checklist.
 
@@ -121,12 +123,11 @@ async def update_checkitem(
     Returns:
         Dict: The updated checkitem data
     """
-    return await service.update_checkitem(
-        checklist_id, checkitem_id, name, checked, pos
-    )
+    return await service.update_checkitem(checklist_id, checkitem_id, name, checked, pos)
 
 
-async def delete_checkitem(checklist_id: str, checkitem_id: str) -> Dict:
+@mcp.tool()
+async def delete_checkitem(context: Context, checklist_id: str, checkitem_id: str) -> Dict:
     """
     Delete a checkitem from a checklist.
 

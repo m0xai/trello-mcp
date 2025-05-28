@@ -6,6 +6,8 @@ import logging
 from typing import List
 
 from mcp.server.fastmcp import Context
+from mcp.server.fastmcp.tools import Tool
+from fastmcp import FastMCP
 
 from server.models import TrelloBoard
 from server.services.board import BoardService
@@ -15,8 +17,11 @@ logger = logging.getLogger(__name__)
 
 service = BoardService(client)
 
+mcp = FastMCP("Trello MCP")
 
-async def get_board(ctx: Context, board_id: str) -> TrelloBoard:
+
+@mcp.tool()
+async def get_board(context: Context, board_id: str) -> TrelloBoard:
     """Retrieves a specific board by its ID.
 
     Args:
@@ -33,11 +38,12 @@ async def get_board(ctx: Context, board_id: str) -> TrelloBoard:
     except Exception as e:
         error_msg = f"Failed to get board: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
 
 
-async def get_boards(ctx: Context) -> List[TrelloBoard]:
+@mcp.tool()
+async def get_boards(context: Context) -> List[TrelloBoard]:
     """Retrieves all boards for the authenticated user.
 
     Returns:
@@ -51,5 +57,5 @@ async def get_boards(ctx: Context) -> List[TrelloBoard]:
     except Exception as e:
         error_msg = f"Failed to get boards: {str(e)}"
         logger.error(error_msg)
-        await ctx.error(error_msg)
+        await context.error(error_msg)
         raise
