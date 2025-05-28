@@ -1,29 +1,22 @@
 FROM python:3.12-slim
 
-# Add metadata labels
-LABEL description="Trello MCP Server"
-LABEL version="1.0"
-
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser
-
-# Install Python dependencies
+# Install only necessary system dependencies for build, then remove them
 COPY pyproject.toml uv.lock ./
-RUN pip install --no-cache-dir uv && \
-    uv pip install --system -e .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential && \
+    pip install --no-cache-dir uv && \
+    uv pip install --system -e . && \
+    pip install --no-cache-dir fastmcp==2.5.1 && \
+    apt-get purge -y --auto-remove build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy application code
 COPY . .
 
-# Set ownership to non-root user
-RUN chown -R appuser:appuser /app
+# Create non-root user and set ownership
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 
 # Set default environment variables
 ENV PYTHONUNBUFFERED=1
