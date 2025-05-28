@@ -22,9 +22,19 @@ from server.tools.list import get_list as _get_list, get_lists as _get_lists, cr
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    filename="trello_mcp.log",
+    filemode="a"
 )
 logger = logging.getLogger(__name__)
+
+# Add a console handler for development
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 # Load environment variables
 load_dotenv()
@@ -118,12 +128,10 @@ if __name__ == "__main__":
 
         if use_claude:
             logger.info("Starting Trello MCP Server in Claude app mode...")
-            mcp.run()  # Default: stdio transport for Claude
-            logger.info("Trello MCP Server started successfully")
+            mcp.run(transport="stdio")  # Explicitly use stdio transport for Claude
         else:
             logger.info(f"Starting Trello MCP Server in SSE mode at http://{host}:{port}/sse")
             mcp.run(transport="sse")
-            logger.info("Trello MCP Server started successfully")
     except KeyboardInterrupt:
         logger.info("Shutting down server...")
     except Exception as e:
