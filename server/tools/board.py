@@ -6,7 +6,6 @@ import logging
 from typing import List
 
 from mcp.server.fastmcp import Context
-from mcp.server.fastmcp.tools import Tool
 from fastmcp import FastMCP
 
 from server.models import TrelloBoard
