@@ -29,8 +29,13 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv()
 
+host = os.getenv("MCP_SERVER_HOST", "0.0.0.0")
+port = int(os.getenv("MCP_SERVER_PORT", "8000"))
+
 # Initialize MCP server with tools
 mcp = FastMCP("Trello MCP Server")
+mcp.settings.host = host
+mcp.settings.port = port
 
 # Register tools
 @mcp.tool()
@@ -108,17 +113,15 @@ if __name__ == "__main__":
             raise ValueError(
                 "TRELLO_API_KEY and TRELLO_TOKEN must be set in environment variables"
             )
-
+        
         use_claude = os.getenv("USE_CLAUDE_APP", "true").lower() == "true"
-        host = os.getenv("MCP_SERVER_HOST", "0.0.0.0")
-        port = int(os.getenv("MCP_SERVER_PORT", "8952"))
 
         if use_claude:
             logger.info("Starting Trello MCP Server in Claude app mode...")
             mcp.run()  # Default: stdio transport for Claude
             logger.info("Trello MCP Server started successfully")
         else:
-            logger.info(f"Starting Trello MCP Server in SSE mode at {host}:{port} ...")
+            logger.info(f"Starting Trello MCP Server in SSE mode at http://{host}:{port}/sse")
             mcp.run(transport="sse")
             logger.info("Trello MCP Server started successfully")
     except KeyboardInterrupt:
