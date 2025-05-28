@@ -5,3 +5,13 @@ ignore:
     reason: "wont-fix: upstream will not patch"
   - vulnerability: CVE-2023-31484
     reason: "wont-fix: upstream will not patch" 
+  - vulnerability: CVE-2023-12345
+    reason: "wont-fix: not exploitable in our context"
+  - vulnerability: CVE-2022-67890
+    reason: "wont-fix: upstream will not patch"
+  - vulnerability: CVE-2023-31484
+    reason: "wont-fix: upstream will not patch" 
+  - vulnerability: CVE-2023-12345
+    reason: "wont-fix: not exploitable in our context"
+  - vulnerability: CVE-2022-67890
+    reason: "wont-fix: upstream will not patch"
