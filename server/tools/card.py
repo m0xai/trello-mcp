@@ -13,12 +13,11 @@ from server.models import TrelloCard
 from server.services.card import CardService
 from server.trello import client
 from server.dtos.update_card import UpdateCardPayload
+from server.mcp_instance import mcp
 
 logger = logging.getLogger(__name__)
 
 service = CardService(client)
-
-mcp = FastMCP("Trello MCP")
 
 
 @mcp.tool()

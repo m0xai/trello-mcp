@@ -36,6 +36,16 @@ def trello_rate_limit_handler(func):
     return wrapper
 
 
+def redact_sensitive(data):
+    if isinstance(data, dict):
+        data = data.copy()
+        if 'token' in data:
+            data['token'] = '***REDACTED***'
+        if 'key' in data:
+            data['key'] = '***REDACTED***'
+    return data
+
+
 class TrelloClient:
     """
     Client class for interacting with the Trello API over REST.
@@ -66,14 +76,14 @@ class TrelloClient:
                 api_key = os.getenv("TRELLO_API_KEY", self.api_key)
                 auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
                 logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
-            logger.error(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.HTTPStatusError(
                 f"Failed to get {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            logger.error(f"Request error: {e}")
+            logger.error(f"Request error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.RequestError(f"Failed to get {endpoint}: {str(e)}")
 
     @trello_rate_limit_handler
@@ -90,14 +100,14 @@ class TrelloClient:
                 api_key = os.getenv("TRELLO_API_KEY", self.api_key)
                 auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
                 logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
-            logger.error(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.HTTPStatusError(
                 f"Failed to post to {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            logger.error(f"Request error: {e}")
+            logger.error(f"Request error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.RequestError(f"Failed to post to {endpoint}: {str(e)}")
 
     @trello_rate_limit_handler
@@ -114,14 +124,14 @@ class TrelloClient:
                 api_key = os.getenv("TRELLO_API_KEY", self.api_key)
                 auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
                 logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
-            logger.error(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.HTTPStatusError(
                 f"Failed to put to {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            logger.error(f"Request error: {e}")
+            logger.error(f"Request error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.RequestError(f"Failed to put to {endpoint}: {str(e)}")
 
     @trello_rate_limit_handler
@@ -140,12 +150,12 @@ class TrelloClient:
                 api_key = os.getenv("TRELLO_API_KEY", self.api_key)
                 auth_url = f"https://trello.com/1/authorize?expiration=never&name=Trello+Assistant+MCP&scope=read,write&response_type=token&key={api_key}"
                 logger.info(f"Trello authorization required. Please visit this URL to authorize the app: {auth_url}")
-            logger.error(f"HTTP error: {e}")
+            logger.error(f"HTTP error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.HTTPStatusError(
                 f"Failed to delete {endpoint}: {str(e)}",
                 request=e.request,
                 response=e.response,
             )
         except httpx.RequestError as e:
-            logger.error(f"Request error: {e}")
+            logger.error(f"Request error: {e} | endpoint: {endpoint} | params: {redact_sensitive(all_params)}")
             raise httpx.RequestError(f"Failed to delete {endpoint}: {str(e)}")

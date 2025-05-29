@@ -2,6 +2,41 @@
 
 A powerful MCP server for interacting with Trello boards, lists, and cards via AI Hosts.
 
+## Quick Start
+
+To get started quickly, follow these steps:
+
+1. **Update your `.env` file** with your Trello API credentials:
+   - Copy `.env.example` to `.env` if you haven't already:
+     ```sh
+     cp .env.example .env
+     ```
+   - Edit `.env` and fill in your Trello API key and token:
+     ```env
+     TRELLO_API_KEY=your_trello_api_key_here
+     TRELLO_TOKEN=your_trello_token_here
+     # ...other settings...
+     ```
+
+2. **Run the MCP server using Docker:**
+   ```sh
+   docker run \
+     --name trello-mcp-server \
+     -d \
+     --rm \
+     --env-file .env \
+     --network host \
+     -p 8952:8952 \
+     valerok86/trello-mcp-server:latest
+   ```
+   This will start the server in detached mode, using your `.env` file for configuration.
+   - With `--network host`, the container will listen on the same network interfaces as your host machine.
+   This ensures the server only listens on localhost, which is recommended for local development with host networking.
+
+3. **Connect your MCP-compatible client (e.g., Cursor, Claude Desktop) to** `http://localhost:8952/sse`.
+
+---
+
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Prerequisites](#prerequisites)
@@ -428,32 +463,8 @@ docker run \
   valerok86/trello-mcp-server:latest
 ```
 
-Environment variables passed with `-e` will take precedence over those defined in your `.env` file. This allows you to easily change configuration at runtime without modifying your `.env` file, or to run the container without a `.env` file at all.
+- Make sure your `.env` file is set up with your Trello credentials before running the server.
+- For more advanced usage, see the rest of this README.
 
-### Running with Docker Run (Alternative to Docker Compose)
-
-You can run the container directly using `docker run` instead of Docker Compose. Here's the simplified command that relies on defaults from the Dockerfile:
-
-```sh
-docker run \
-  --restart unless-stopped \
-  -p "${MCP_SERVER_PORT:-8952}:${MCP_SERVER_PORT:-8952}" \
-  -v "$(pwd):/app" \
-  --env-file .env \
-  valerok86/trello-mcp-server:latest
+## Trello Open API documnetation
 ```
-
-This command:
-- Uses the same restart policy as Docker Compose
-- Maps the same port (defaulting to 8952 if not specified)
-- Mounts the current directory to `/app` in the container
-- Loads environment variables from `.env`
-
-The following settings are now handled by the Dockerfile:
-- Python unbuffered output (PYTHONUNBUFFERED=1)
-- SSE mode (USE_CLAUDE_APP=false)
-- Server name (MCP_SERVER_NAME)
-- Server host (MCP_SERVER_HOST)
-- Default port (MCP_SERVER_PORT)
-
-You can still override any of these settings using the `-e` flag if needed.

@@ -10,11 +10,10 @@ from fastmcp import FastMCP
 
 from server.services.checklist import ChecklistService
 from server.trello import client
+from server.mcp_instance import mcp
 
 logger = logging.getLogger(__name__)
 service = ChecklistService(client)
-
-mcp = FastMCP("Trello MCP")
 
 
 @mcp.tool()
