@@ -6,7 +6,6 @@ import logging
 from typing import List
 
 from mcp.server.fastmcp import Context
-from fastmcp import FastMCP
 
 from server.models import TrelloBoard
 from server.services.board import BoardService

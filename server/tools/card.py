@@ -7,7 +7,6 @@ from typing import List, Optional
 from datetime import datetime
 
 from mcp.server.fastmcp import Context
-from fastmcp import FastMCP
 
 from server.models import TrelloCard
 from server.services.card import CardService

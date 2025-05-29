@@ -6,7 +6,6 @@ import logging
 from typing import Dict, List, Optional
 
 from mcp.server.fastmcp import Context
-from fastmcp import FastMCP
 
 from server.services.checklist import ChecklistService
 from server.trello import client
