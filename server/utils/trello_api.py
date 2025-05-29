@@ -40,9 +40,9 @@ def redact_sensitive(data):
     if isinstance(data, dict):
         data = data.copy()
         if 'token' in data:
-            data['token'] = '***REDACTED***'
+            data['token'] = '***REDACTED***' # nosec
         if 'key' in data:
-            data['key'] = '***REDACTED***'
+            data['key'] = '***REDACTED***' # nosec
     return data
 
 
