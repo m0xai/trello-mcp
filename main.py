@@ -2,10 +2,10 @@ import logging
 import os
 from dotenv import load_dotenv
 from server.mcp_instance import mcp
-import server.tools.board as board  
-import server.tools.card as card
-import server.tools.list as list
-import server.tools.checklist as checklist
+import server.tools.board as board  # noqa: F401
+import server.tools.card as card  # noqa: F401
+import server.tools.list as list  # noqa: F401
+import server.tools.checklist as checklist  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
