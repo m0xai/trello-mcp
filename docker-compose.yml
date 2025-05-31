@@ -1,27 +1,37 @@
 version: '3.8'
 
 services:
-  trello-mcp-server:
-    container_name: trello-mcp-server
+  trello-mcp:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "${MCP_SERVER_PORT:-8952}:${MCP_SERVER_PORT:-8952}"
-    network_mode: host
-    volumes:
-      - .:/app
-    env_file:
-      - .env
+    image: trello-mcp:latest
+    container_name: trello-mcp
     restart: unless-stopped
+    environment:
+      - USE_CLAUDE_APP=${USE_CLAUDE_APP:-false}
+      - MCP_SERVER_NAME=${MCP_SERVER_NAME:-"Trello MCP Server"}
+      - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
+      - MCP_SERVER_PORT=${MCP_SERVER_PORT:-8952}
+      - TRELLO_API_KEY=${TRELLO_API_KEY}
+      - TRELLO_API_SECRET=${TRELLO_API_SECRET}
+      - TRELLO_TOKEN=${TRELLO_TOKEN}
+    ports:
+      - "${MCP_SERVER_PORT:-8952}:8952"
+      - "8953:8953"
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8952/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     deploy:
       resources:
         limits:
           cpus: '1'
           memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
     logging:
       driver: "json-file"
       options:
