@@ -56,8 +56,9 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run Grype vulnerability scanner
-        uses: anchore/grype-action@v1
+        uses: anchore/scan-action@v6
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          fail-on: high
-          output: table 
+          fail-build: true
+          severity-cutoff: high
+          output-format: table 
