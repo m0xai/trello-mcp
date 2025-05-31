@@ -1,6 +1,7 @@
-# Git
+# Version Control
 .git
 .gitignore
+.gitattributes
 
 # Python
 __pycache__/
@@ -8,7 +9,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -24,27 +24,62 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Virtual Environment
+.venv/
 venv/
 ENV/
+env/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-*
+.project
+.pydevproject
+.settings/
 
 # Docker
 Dockerfile
 .dockerignore
+docker-compose*.yml
+.docker/
 
-# Environment variables
+# Environment and Secrets
 .env
 .env.*
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
 
-# Logs
+# Logs and Databases
 *.log
+*.sqlite
+*.db
+logs/
+data/
 
-# Local development
-.DS_Store 
+# OS and Editor
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.temp
+
+# Build and Cache
+.ruff_cache/
+.mypy_cache/
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/ 

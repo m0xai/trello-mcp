@@ -6,6 +6,7 @@ import server.tools.board as board  # noqa: F401
 import server.tools.card as card  # noqa: F401
 import server.tools.list as list  # noqa: F401
 import server.tools.checklist as checklist  # noqa: F401
+import server.health_app  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ logger.addHandler(console_handler)
 load_dotenv()
 
 host = os.getenv("MCP_SERVER_HOST", "0.0.0.0")
-port = int(os.getenv("MCP_SERVER_PORT", "8000"))
+port = int(os.getenv("MCP_SERVER_PORT", "8952"))
 mcp.settings.host = host
 mcp.settings.port = port
 
