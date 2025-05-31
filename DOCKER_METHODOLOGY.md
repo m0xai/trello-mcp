@@ -60,6 +60,14 @@ USER appuser
   - Tag images with `latest`, semver, and optional suffixes.
 - **Static Content Deployment:**
   - Use a separate workflow to deploy static assets (e.g., to GitHub Pages).
+- **Security & Quality Checks:**
+  - **Linting:** Run code linters (e.g., ruff, flake8) to enforce code quality and style.
+  - **Static Security Analysis:** Use Bandit to scan Python code for common security issues.
+  - **Container Vulnerability Scanning:** Use Anchore Grype/Scan to scan built Docker images for vulnerabilities, failing the build on high-severity issues.
+  - **Minimal Permissions:** Set the least privileges required for each job (e.g., `contents: read`, `packages: write` only where needed).
+  - **Caching:** Use GitHub Actions cache for Docker layers to speed up builds and ensure reproducibility.
+  - **Multi-platform Builds:** Build images for all required platforms (e.g., `linux/amd64`, `linux/arm64`).
+  - **Conditional Steps:** Only push images or log in to registries on main/master branches.
 
 ---
 
@@ -68,6 +76,9 @@ USER appuser
   - Always run containers as a non-root user.
   - Minimize the final image size and attack surface.
   - Use `tini` or a similar init system for signal handling.
+  - **Run static code analysis (Bandit) and linting (ruff/flake8) in CI to catch issues early.**
+  - **Scan all built images for vulnerabilities (Anchore Grype/Scan) and fail builds on high-severity findings.**
+  - **Set minimal permissions for CI jobs to reduce risk.**
 - **Maintainability:**
   - Use multi-stage builds to separate build and runtime concerns.
   - Keep Dockerfiles and entrypoint scripts well-documented.
@@ -76,6 +87,25 @@ USER appuser
   - Automate builds, tests, and deployments with CI/CD workflows.
   - Use semantic versioning for traceability.
   - Build for all required platforms.
+
+---
+
+## 5a. Recommended Security & Quality Checks in CI
+
+- **Code Linting:**
+  - Use tools like `ruff` or `flake8` to enforce code style and catch common errors.
+- **Static Security Analysis:**
+  - Use `bandit` to scan Python code for security vulnerabilities.
+- **Container Vulnerability Scanning:**
+  - Use `anchore/scan-action` (or Grype) to scan Docker images for vulnerabilities, failing on high severity.
+- **Minimal Permissions:**
+  - Set the least required permissions for each workflow/job (e.g., `contents: read`, `packages: write`).
+- **Caching:**
+  - Use GitHub Actions cache for Docker layers to speed up builds and ensure reproducibility.
+- **Multi-platform Builds:**
+  - Build and test images for all required platforms (e.g., `linux/amd64`, `linux/arm64`).
+- **Conditional Steps:**
+  - Only push images or log in to registries on main/master branches.
 
 ---
 

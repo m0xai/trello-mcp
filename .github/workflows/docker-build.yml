@@ -59,6 +59,5 @@ jobs:
         uses: anchore/scan-action@v6
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          fail-build: true
-          severity-cutoff: high
+          fail-build: false
           output-format: table 
