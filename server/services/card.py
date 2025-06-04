@@ -40,12 +40,10 @@ class CardService:
         response = await self.client.GET(f"/lists/{list_id}/cards")
         return [TrelloCard(**card) for card in response]
 
-    async def create_card(
-        self, list_id: str, name: str, desc: str | None = None
-    ) -> TrelloCard:
+    async def create_card(self, **kwargs) -> TrelloCard:
         """Creates a new card in a given list.
 
-        Args:
+        Args
             list_id (str): The ID of the list to create the card in.
             name (str): The name of the new card.
             desc (str, optional): The description of the new card. Defaults to None.
@@ -53,10 +51,7 @@ class CardService:
         Returns:
             TrelloCard: The newly created card object.
         """
-        data = {"name": name, "idList": list_id}
-        if desc:
-            data["desc"] = desc
-        response = await self.client.POST("/cards", data=data)
+        response = await self.client.POST("/cards", data=kwargs)
         return TrelloCard(**response)
 
     async def update_card(self, card_id: str, **kwargs) -> TrelloCard:
