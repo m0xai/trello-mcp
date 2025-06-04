@@ -11,6 +11,7 @@ from server.models import TrelloCard
 from server.services.card import CardService
 from server.trello import client
 from server.dtos.update_card import UpdateCardPayload
+from server.dtos.create_card import CreateCardPayload
 
 logger = logging.getLogger(__name__)
 
@@ -59,9 +60,7 @@ async def get_cards(ctx: Context, list_id: str) -> List[TrelloCard]:
         raise
 
 
-async def create_card(
-    ctx: Context, list_id: str, name: str, desc: str | None = None
-) -> TrelloCard:
+async def create_card(ctx: Context, payload: CreateCardPayload) -> TrelloCard:
     """Creates a new card in a given list.
 
     Args:
@@ -73,9 +72,9 @@ async def create_card(
         TrelloCard: The newly created card object.
     """
     try:
-        logger.info(f"Creating card in list {list_id} with name: {name}")
-        result = await service.create_card(list_id, name, desc)
-        logger.info(f"Successfully created card in list: {list_id}")
+        logger.info(f"Creating card in list {payload.idList} with name: {payload.name}")
+        result = await service.create_card(**payload.model_dump(exclude_unset=True))
+        logger.info(f"Successfully created card in list: {payload.idList}")
         return result
     except Exception as e:
         error_msg = f"Failed to create card: {str(e)}"
