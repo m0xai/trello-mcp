@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from server.utils.trello_api import TrelloClient
 
@@ -39,7 +39,7 @@ class ChecklistService:
         return await self.client.GET(f"/cards/{card_id}/checklists")
 
     async def create_checklist(
-        self, card_id: str, name: str, pos: Optional[str] = None
+        self, card_id: str, name: str, pos: str | None = None
     ) -> Dict:
         """
         Create a new checklist on a card.
@@ -58,7 +58,7 @@ class ChecklistService:
         return await self.client.POST(f"/checklists", data={"idCard": card_id, **data})
 
     async def update_checklist(
-        self, checklist_id: str, name: Optional[str] = None, pos: Optional[str] = None
+        self, checklist_id: str, name: str | None = None, pos: str | None = None
     ) -> Dict:
         """
         Update an existing checklist.
@@ -95,7 +95,7 @@ class ChecklistService:
         checklist_id: str,
         name: str,
         checked: bool = False,
-        pos: Optional[str] = None,
+        pos: str | None = None,
     ) -> Dict:
         """
         Add a new item to a checklist.
@@ -120,9 +120,9 @@ class ChecklistService:
         self,
         checklist_id: str,
         checkitem_id: str,
-        name: Optional[str] = None,
-        checked: Optional[bool] = None,
-        pos: Optional[str] = None,
+        name: str | None = None,
+        checked: bool | None = None,
+        pos: str | None = None,
     ) -> Dict:
         """
         Update a checkitem in a checklist.
