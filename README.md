@@ -1,6 +1,7 @@
 # Trello MCP Server
 
 A powerful MCP server for interacting with Trello boards, lists, and cards via AI Hosts.
+It was designed for use with **Claude Desktop**, but also supports other clients via **SSE server mode**.
 
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
@@ -22,127 +23,104 @@ A powerful MCP server for interacting with Trello boards, lists, and cards via A
 
 ## Prerequisites
 
-1. Python 3.12 or higher, can easly managed by `uv`
-2. [Claude for Desktop](https://claude.ai/download) installed
-3. Trello account and API credentials
-4. [uv](https://github.com/astral-sh/uv) package manager installed
+### Claude Desktop mode
 
-## Pre-installation
-1. Make sure you have installed Claude Desktop App
-2. Make sure you have already logged in with your account into Claude.
-3. Start Claude
+- [Claude for Desktop](https://claude.ai/download) installed
+- You have already logged in with your account into Claude
+- A git client, so you can clone this repository
+- [uv](https://docs.astral.sh/uv/#installation) to run python. It manages python versions and dependencies too.
+- Trello account, so you can get API credentials (later in this guide)
 
-## Installation
+### SSE server mode
+
+- A git client, so you can clone this repository
+- [Docker](https://www.docker.com/) to run the server with docker
+- or [uv](https://docs.astral.sh/uv/#installation) to run the server with python if you donøt want to use docker
+
+## Installation for Claude Desktop mode
+
+First, set up Trello API credentials:
+
+- Go to [Trello Apps Administration](https://trello.com/power-ups/admin)
+- Create a new integration at [New Power-Up or Integration](https://trello.com/power-ups/admin/new)
+- Fill in your information (you can leave the Iframe connector URL empty) and make sure to select the correct Workspace
+- Click your app's icon and navigate to "API key" from left sidebar
+    - **NOTE**: The secret you see on that screen is **NOT** your token
+- Copy your "API key" and store it safely, you will need it later
+- On the right side, hidden in the text: "you can manually generate a Token." 
+    - Click the word "Token" to get af form to fill out for your Trello Token 
+- Fill out the form and then click next
+
+- You will now get your Token. Store it safely, you will need it later
 
 
+Then, clone this repository:
 
-1. Set up Trello API credentials:
-   - Go to [Trello Apps Administration](https://trello.com/power-ups/admin)
-   - Create a new integration at [New Power-Up or Integration](https://trello.com/power-ups/admin/new)
-   - Fill in your information (you can leave the Iframe connector URL empty) and make sure to select the correct Workspace
-   - Click your app's icon and navigate to "API key" from left sidebar. 
-   - Copy your "API key" and on the right side: "you can manually generate a Token." click the word token to get your Trello Token.
-
-2. Rename the `.env.example` file in the project root with `.env` and set vairables you just got:
-```bash
-TRELLO_API_KEY=your_api_key_here
-TRELLO_TOKEN=your_token_here
-```
-
-3. Install uv if you haven't already:
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-4. Clone this repository:
 ```bash
 git clone https://github.com/m0xai/trello-mcp-server.git
 cd trello-mcp-server
 ```
 
-5. Install dependencies and set server for Claude using uv::
+Then, Rename the `.env.example` file in the project root with `.env` and set the TRELLO_... variables you just got:
+
+```bash
+TRELLO_API_KEY=your_api_key_here
+TRELLO_TOKEN=your_token_here
+```
+
+Then, Install uv if you haven't already:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+Then, use uv to get pythonm install dependencies and install the server for Claude using uv:
 ```bash
 uv run mcp install main.py
 ```
 
-6. Restart Claude Desktop app
+Finally, **restart** Claude Desktop app.
+It should be ready to use. Try asking it to summarize a Trello card.
 
-## Server Modes
 
-This MCP server can run in two different modes:
+## Installation for SSE server mode
 
-### Claude App Mode
+This mode runs as a standalone SSE server that can be used with any MCP-compatible client, including Cursor.
+The server will be available at `http://localhost:8000/sse` by default (or change the port by modifying MCP_SERVER_PORT in your .env file)
 
-This mode integrates directly with the Claude Desktop application:
+You can run with docker or python (using uv)
 
-1. Set `USE_CLAUDE_APP=true` in your `.env` file (this is the default)
-2. Run the server with:
+### Run with Docker
+
+You can choose to run with Docker (then you don't need python and uv)), if you run this command: 
+
 ```bash
-uv run mcp install main.py
-```
-3. Restart the Claude Desktop application
-
-### SSE Server Mode
-
-This mode runs as a standalone SSE server that can be used with any MCP-compatible client, including Cursor:
-
-1. Set `USE_CLAUDE_APP=false` in your `.env` file
-2. Run the server with:
-```bash
-python main.py
-```
-3. The server will be available at `http://localhost:8000` by default (or your configured port)
-
-### Docker Mode
-
-You can also run the server using Docker Compose:
-
-1. Make sure you have Docker and Docker Compose installed
-2. Create your `.env` file with your configuration
-3. Build and start the container:
-```bash
-docker-compose up -d
-```
-4. The server will run in SSE mode by default
-5. To view logs:
-```bash
-docker-compose logs -f
-```
-6. To stop the server:
-```bash
-docker-compose down
+docker compose up -d
 ```
 
-## Configuration
+To view logs:
 
-The server can be configured using environment variables in the `.env` file:
+```bash
+docker compose logs -f
+```
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| TRELLO_API_KEY | Your Trello API key | Required |
-| TRELLO_TOKEN | Your Trello API token | Required |
-| MCP_SERVER_NAME | The name of the MCP server | Trello MCP Server |
-| MCP_SERVER_HOST | Host address for SSE mode | 0.0.0.0 |
-| MCP_SERVER_PORT | Port for SSE mode | 8000 |
-| USE_CLAUDE_APP | Whether to use Claude app mode | true |
+To stop the server:
 
-You can customize the server by editing these values in your `.env` file.
+```bash
+docker compose down
+```
 
-## Client Integration
+### Run with Python and 'uv'
 
-### Using with Claude Desktop
+As an alternative, you can choose to run with python (then you don't need docker)), if you run this command: 
 
-1. Run the server in Claude app mode (`USE_CLAUDE_APP=true`)
-2. Start or restart Claude Desktop
-3. Claude will automatically detect and connect to your MCP server
+```bash
+USE_CLAUDE_APP=false uv run main.py
+```
 
-### Using with Cursor
+### Client Integration for SSE mode, Using with Cursor
 
 To connect your MCP server to Cursor:
-
-1. Run the server in SSE mode (`USE_CLAUDE_APP=false`)
 2. In Cursor, go to Settings (gear icon) > AI > Model Context Protocol
-3. Add a new server with URL `http://localhost:8000` (or your configured host/port)
+3. Add a new server with URL `http://localhost:8000/sse` (or your configured host/port)
 4. Select the server when using Cursor's AI features
 
 You can also add this configuration to your Cursor settings JSON file (typically at `~/.cursor/mcp.json`):
@@ -159,7 +137,7 @@ You can also add this configuration to your Cursor settings JSON file (typically
 
 ### Using with Other MCP Clients
 
-For other MCP-compatible clients, point them to the SSE endpoint at `http://localhost:8000`.
+For other MCP-compatible clients, point them to the SSE endpoint at `http://localhost:8000/sse`.
 
 ### Minimal Client Example
 
@@ -197,6 +175,21 @@ async def connect_to_mcp_server():
 if __name__ == "__main__":
     asyncio.run(connect_to_mcp_server())
 ```
+
+## Configuration
+
+The server can be configured using environment variables in the `.env` file:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| TRELLO_API_KEY | Your Trello API key | Required |
+| TRELLO_TOKEN | Your Trello API token | Required |
+| MCP_SERVER_NAME | The name of the MCP server | Trello MCP Server |
+| MCP_SERVER_HOST | Host address for SSE mode | 0.0.0.0 |
+| MCP_SERVER_PORT | Port for SSE mode | 8000 |
+| USE_CLAUDE_APP | Whether to use Claude app mode | true |
+
+You can customize the server by editing these values in your `.env` file.
 
 ## Capabilities
 
